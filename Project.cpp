@@ -8,9 +8,9 @@ using namespace std;
 #define Board_Length 20
 #define Board_Width 10
 
-char grid[Board_Width][Board_Length];
 char input;
 bool exitFlag;
+
 
 void Initialize(void);
 void GetInput(void);
@@ -45,16 +45,6 @@ void Initialize(void)
     MacUILib_clearScreen();
 
     exitFlag = false;
-    objPos border;
-    for (int x=0;x<Board_Width;x++){
-        for(int y=0;y<Board_Length;y++){
-            border = objPos(x,y,' ');
-            if(x==0 || x==Board_Width-1 || y==0 || y==Board_Length-1){
-                border.setObjPos(x,y,'#');
-            }
-            grid[x][y]= border.getSymbol();
-        }
-    }
 }
 
 void GetInput(void)
@@ -83,7 +73,11 @@ void DrawScreen(void)
     MacUILib_clearScreen();    
     for (int x=0;x<Board_Width;x++){
         for(int y=0;y<Board_Length;y++){
-           cout<<grid[x][y];
+           objPos cell(x,y,' ');
+           if(x==0 || x==Board_Width-1 || y==0 || y==Board_Length-1){
+                cell.setObjPos(x,y,'#');
+           }
+           cout<< cell.getSymbol();
         }
         cout<<"\n";
     }
