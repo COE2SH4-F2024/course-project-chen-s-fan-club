@@ -17,9 +17,21 @@ class objPos
         objPos();
         objPos(int xPos, int yPos, char sym);
         
-        // Respect the rule of six / minimum four
-        // [TODO] Implement the missing special member functions to meet the minimum four rule
+        // Destructor
+        ~objPos();
         
+        // Copy Constructor
+        objPos(const objPos& other);
+
+        // Copy Assignment Operator
+        objPos& operator=(const objPos& other);
+
+        // Move Constructor
+        objPos(objPos&& other) noexcept;
+
+        // Move Assignment Operator
+        objPos& operator=(objPos&& other) noexcept;
+
         void setObjPos(objPos o);        
         void setObjPos(int xPos, int yPos, char sym);  
 
