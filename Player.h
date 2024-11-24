@@ -7,6 +7,7 @@
 
 class Player
 {
+
     // Construct the remaining declaration from the project manual.
 
     // Only some sample members are included here
@@ -23,12 +24,20 @@ class Player
         objPos getPlayerPos() const; // Upgrade this in iteration 3.       
         void updatePlayerDir();
         void movePlayer();
-
+        void drawPlayer();
+        void interactWithItem();
+      
         // More methods to be added here
 
     private:
         objPos playerPos; // Upgrade this in iteration 3.       
         enum Dir myDir;
+        int health;
+        int score;
+        int collectedItems;
+        int speedLevel;
+        int maxSpeedLevel;
+
 
         // Need a reference to the Main Game Mechanisms
         GameMechs* mainGameMechsRef;
