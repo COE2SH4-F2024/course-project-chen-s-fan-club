@@ -24,7 +24,7 @@ int main(void)
 
     Initialize();
 
-    while(!gameMechs->getExitFlagStatus())  
+    while(!gameMechs->getExitFlagStatus() && !gameMechs->getLoseFlagStatus())  
     {
         GetInput();
         RunLogic();
