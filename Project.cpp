@@ -1,14 +1,15 @@
 #include <iostream>
 #include "MacUILib.h"
 #include "objPos.h"
+
 #include "GameMechs.h"
+#include "Player.h"
 using namespace std;
 
 #define DELAY_CONST 100000
 
-char input;
-
 GameMechs* gameMechs = nullptr; //Pointer to GameMechs Class
+Player *myPlayer = nullptr; //Pointer to Player Class
 
 void Initialize(void);
 void GetInput(void);
@@ -43,60 +44,42 @@ void Initialize(void)
     MacUILib_clearScreen();
 
     gameMechs = new GameMechs(30, 15);
+    myPlayer = new Player(gameMechs);
 }
 
 void GetInput(void)
 {
-   if(MacUILib_hasChar())
-    {
-        gameMechs->setInput(MacUILib_getChar());
-    }
+   gameMechs->ScanInput();
 }
 
 void RunLogic(void)
 {
-    input =gameMechs->getInput();
-    if(input != 0)  // if not null character
-    {
-        switch(input)
-        {                      
-            case 'a':
-                
-                break;
-            case 'd':
-                
-                break;
-            case 'w':
-
-                break;
-            case 's':
-
-                break;
-            case 27:  // exit
-                gameMechs->setExitTrue();
-                break;
-            default: 
-                break;
-        }     
-    }
-    gameMechs->clearInput(); //clears input
-    
+    myPlayer->updatePlayerDir();
+    myPlayer->movePlayer();
 }
 
 void DrawScreen(void)
 {
+    objPos PlayerPos = myPlayer->getPlayerPos();
     int Board_Width = gameMechs->getBoardSizeX();
     int Board_Length = gameMechs->getBoardSizeY();
     MacUILib_clearScreen();    
     for (int y=0;y<Board_Length;y++){
         for(int x=0;x<Board_Width;x++){
-           objPos cell(x,y,' ');
-           if(x==0 || x==Board_Width-1 || y==0 || y==Board_Length-1){
-                cell.setObjPos(x,y,'#');
+           if(x==0 || x==Board_Width-1 || y==0 || y==Board_Length-1)
+           {
+              MacUILib_printf("%c", '#');  
            }
-           cout<< cell.getSymbol();
+           else if (y == PlayerPos.pos->y && x== PlayerPos.pos->x)
+           {
+            MacUILib_printf("%c",PlayerPos.symbol);
+           }
+           else
+           {
+            MacUILib_printf("%c", ' ');
+           }
         }
-        cout<<"\n";
+        MacUILib_printf("%c", '\n');
     }
 }
 
@@ -109,7 +92,9 @@ void LoopDelay(void)
 void CleanUp(void)
 {
     MacUILib_clearScreen();    
-    MacUILib_uninit();
     delete gameMechs;
+    delete myPlayer;
     gameMechs = nullptr;
+    myPlayer = nullptr;
+    MacUILib_uninit();
 }

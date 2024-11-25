@@ -1,4 +1,6 @@
 #include "GameMechs.h"
+#include "MacUILib.h"
+
 using namespace std;
 GameMechs::GameMechs()
 {
@@ -23,7 +25,7 @@ GameMechs::GameMechs(int boardX, int boardY)
 // do you need a destructor?
 GameMechs::~GameMechs()
 {
-
+    //no dynamic memory allocation in constructor
 }
 
 bool GameMechs::getExitFlagStatus() const
@@ -84,5 +86,13 @@ void GameMechs::clearInput()
     input = '\0';
 }
 
-
+void GameMechs::ScanInput() {
+    if(MacUILib_hasChar()) {
+        input = MacUILib_getChar();
+    }
+    
+    if (input == 27) {
+        setExitTrue();
+    }
+}
 // More methods should be added here

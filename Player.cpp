@@ -8,7 +8,7 @@ Player::Player(GameMechs* thisGMRef)
     mainGameMechsRef = thisGMRef;
     myDir = STOP;
 
-    playerPos.setObjPos(10, 5, '@');
+    playerPos.setObjPos(mainGameMechsRef->getBoardSizeX()/2, mainGameMechsRef->getBoardSizeY()/2, '@');
 
     health = 100; 
     score = 0;
@@ -31,36 +31,31 @@ objPos Player::getPlayerPos() const
 
 void Player::updatePlayerDir()
 {
-    if(MacUILib_hasChar()){
-        char input = MacUILib_getChar();
-
-        if(input >= 'A' && input <= 'Z'){
-            input += 32;
-        }
-
+        char input = mainGameMechsRef->getInput();
 
         switch(input){
+            case 'W':
             case 'w':
                 if(myDir == Dir::LEFT || myDir == Dir::RIGHT || myDir == Dir::STOP){
                     myDir = Dir::UP;
                 }
                 break;
-
+            case 'S':
             case 's':
                 if(myDir == Dir::LEFT || myDir == Dir::RIGHT || myDir == Dir::STOP){
-                    myDir = Dir::UP;
+                    myDir = Dir::DOWN;
                 }
                 break;
-
+            case 'A':
             case 'a':
-                if(myDir == Dir::LEFT || myDir == Dir::RIGHT || myDir == Dir::STOP){
-                    myDir = Dir::UP;
+                if(myDir == Dir::UP || myDir == Dir::DOWN || myDir == Dir::STOP){
+                    myDir = Dir::LEFT;
                 }
                 break;
-
+            case 'D':
             case 'd':
-                if(myDir == Dir::LEFT || myDir == Dir::RIGHT || myDir == Dir::STOP){
-                    myDir = Dir::UP;
+                if(myDir == Dir::UP || myDir == Dir::DOWN || myDir == Dir::STOP){
+                    myDir = Dir::RIGHT;
                 }
                 break;
             
@@ -82,7 +77,7 @@ void Player::updatePlayerDir()
             break;   
         }
     }          
-}
+
 
 void Player::movePlayer()
 {
