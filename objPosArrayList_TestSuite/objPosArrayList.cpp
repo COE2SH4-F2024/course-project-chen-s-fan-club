@@ -7,7 +7,7 @@ using namespace std;
 objPosArrayList::objPosArrayList()
 {
     listSize = 0;  // no data at first
-    arrayCapacity = 50;  // 50
+    arrayCapacity = ARRAY_MAX_CAP;  // 50
     aList = new objPos[arrayCapacity];
 }
 
@@ -24,6 +24,7 @@ objPosArrayList::objPosArrayList(const objPosArrayList &list)
     for(int i = 0; i < listSize; i++)
         aList[i] = list.aList[i];
 }
+
 int objPosArrayList::getSize() const
 {
     return listSize;
@@ -33,7 +34,6 @@ void objPosArrayList::insertHead(objPos thisPos)
 {
     if (listSize == arrayCapacity) // Check if array is full
     {
-        cout << "Array full..";
         return;
     }
     
@@ -51,8 +51,7 @@ void objPosArrayList::insertHead(objPos thisPos)
 void objPosArrayList::insertTail(objPos thisPos)
 {
     if(listSize == arrayCapacity)
-    {
-        cout << "array full..";
+    { 
         return;
     }
         
@@ -63,7 +62,6 @@ void objPosArrayList::removeHead()
 {
     if (listSize == 0) // Check if list is empty
     {
-        cout << "Array is empty.";
         return;
     }
     
@@ -80,7 +78,6 @@ void objPosArrayList::removeTail()
 {
     if (listSize == 0) // Check if list is empty
     {
-        cout << "Array is empty.";
         return;
     }
 
@@ -89,34 +86,26 @@ void objPosArrayList::removeTail()
 
 objPos objPosArrayList::getHeadElement() const
 {
-    if (listSize == 0) // Check if list is empty
-    {
-        throw std::out_of_range("List is empty.");
+    if (listSize == 0){
+        return objPos();
     }
 
-    return objPos(aList[0]);
+    return aList[0];
 }
 
 objPos objPosArrayList::getTailElement() const
 {
-    if (listSize == 0) // Check if list is empty
-    {
-        throw std::out_of_range("List is empty.");
+    if (listSize == 0){
+        return objPos();
     }
-
-    return objPos(aList[listSize - 1]);
+    return aList[listSize - 1];
 }
 
 objPos objPosArrayList::getElement(int index) const
 {
-    if (index < 0)
-    {
-        index = 0;
-    } 
-    if (index >= listSize) 
-    {
-        index=listSize-1;
+    if (index < 0 || index >= listSize){
+        return objPos();
     }
 
-    return objPos(aList[index]);
+    return aList[index];
 }
