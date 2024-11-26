@@ -24,8 +24,8 @@ class Player
         objPos getPlayerPos() const; // Upgrade this in iteration 3.       
         void updatePlayerDir();
         void movePlayer();
-        void drawPlayer();
-        void interactWithItem();
+
+        const objPosArrayList& getSnakeBody() const;
       
         // More methods to be added here
 
@@ -35,8 +35,7 @@ class Player
         int health;
         int score;
         int collectedItems;
-        int speedLevel;
-        int maxSpeedLevel;
+        objPosArrayList snakeBody;
 
 
         // Need a reference to the Main Game Mechanisms
