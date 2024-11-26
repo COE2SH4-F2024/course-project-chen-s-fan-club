@@ -100,28 +100,5 @@ void GameMechs::ScanInput() {
     }
 }
 
-void GameMechs::generateFood(objPos blockOff)
-{
-    static bool seeded = false;
-    if (!seeded)
-    {
-        srand(time(0)); 
-        seeded = true;
-    }
 
-    int foodX = rand() % (boardSizeX - 2) + 1;
-    int foodY = rand() % (boardSizeY - 2) + 1;
-
-    while (foodX == blockOff.getObjPos().pos->x && foodY == blockOff.getObjPos().pos->y)
-    {
-        foodX = rand() % (boardSizeX - 2) + 1;
-        foodY = rand() % (boardSizeY - 2) + 1;
-    }
-
-    food.setObjPos(foodX, foodY, '@');
-}
-
-objPos GameMechs::getFoodPos() const{
-    return food;
-}
 // More methods should be added here

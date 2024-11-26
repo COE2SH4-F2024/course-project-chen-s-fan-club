@@ -4,13 +4,15 @@
 
 #include "GameMechs.h"
 #include "Player.h"
+#include "Food.h"
+
 using namespace std;
 
 #define DELAY_CONST 100000
 
 GameMechs* gameMechs = nullptr; //Pointer to GameMechs Class
 Player *myPlayer = nullptr; //Pointer to Player Class
-
+Food *myFood; 
 
 void Initialize(void);
 void GetInput(void);
@@ -46,8 +48,9 @@ void Initialize(void)
 
     gameMechs = new GameMechs(30, 15);
     myPlayer = new Player(gameMechs);
+    myFood = new Food();
+    myFood->generateFood(myPlayer->getPlayerPos()->getHeadElement(),gameMechs->getBoardSizeX(), gameMechs->getBoardSizeY());  
 
-    gameMechs->generateFood(myPlayer->getPlayerPos());
 }
 
 void GetInput(void)
@@ -58,22 +61,31 @@ void GetInput(void)
 void RunLogic(void)
 {
     myPlayer->updatePlayerDir();
-    myPlayer->movePlayer();
-    
-    objPos foodPos = gameMechs->getFoodPos();
+    objPos playerPos = myPlayer->getPlayerPos()->getHeadElement();
+    objPos foodPos = myFood->getFoodPos();
 
-    if (myPlayer->getPlayerPos().isPosEqual(&foodPos))
+    myPlayer->movePlayer(myFood);
+
+    
+    objPosArrayList* snakeBody = myPlayer->getPlayerPos();
+
+    //Collison with itself
+    objPos head = snakeBody->getHeadElement();
+    for (int i = 1; i < snakeBody->getSize(); i++)
     {
-        gameMechs->incrementScore();
-        gameMechs->generateFood(myPlayer->getPlayerPos());  
+        objPos bodyPart = snakeBody->getElement(i);
+        if (head.isPosEqual(&bodyPart))
+        {
+            gameMechs->setLoseFlag();
+            break;
+        }
     }
-        
 }
 
 void DrawScreen(void)
 {
-    objPos PlayerPos = myPlayer->getPlayerPos();
-    objPos food = gameMechs->getFoodPos();
+    objPosArrayList* PlayerPos = myPlayer->getPlayerPos();
+    objPos food = myFood->getFoodPos();
 
     int Board_Width = gameMechs->getBoardSizeX();
     int Board_Length = gameMechs->getBoardSizeY();
@@ -82,25 +94,34 @@ void DrawScreen(void)
         for(int x=0;x<Board_Width;x++){
            if(x==0 || x==Board_Width-1 || y==0 || y==Board_Length-1)
            {
-            MacUILib_printf("%c", '#');  
+                MacUILib_printf("%c", '#');  
            }
-           else if (y == PlayerPos.pos->y && x== PlayerPos.pos->x)
+           else 
            {
-            MacUILib_printf("%c",PlayerPos.symbol);
-           }
-           else if (y == food.pos->y && x == food.pos->x)
-           {
-            MacUILib_printf("%c", food.getSymbol());
-           }
-           else
-           {
-            MacUILib_printf("%c", ' ');
-           }
+                bool isPlayer = false;
+                for (int i=0; i<PlayerPos->getSize();i++)
+                {
+                    if (x == PlayerPos->getElement(i).pos->x && y == PlayerPos->getElement(i).pos->y)
+                    {
+                        MacUILib_printf("%c",PlayerPos->getElement(i).symbol);
+                        isPlayer = true;
+                        break;
+                    }
+                }
+                if(!isPlayer) {
+                    if(x == food.pos->x && y == food.pos->y) {
+                        MacUILib_printf("%c", food.symbol);
+                        gameMechs->clearInput();
+                    } else {
+                    MacUILib_printf("%c", ' ');
+                    }
+                }
+           }       
         }
         MacUILib_printf("%c", '\n');
     }
-
 }
+
 
 void LoopDelay(void)
 {
@@ -114,6 +135,8 @@ void CleanUp(void)
     MacUILib_clearScreen();    
     delete gameMechs;
     delete myPlayer;
+    delete myFood;
+    myFood = nullptr;
     gameMechs = nullptr;
     myPlayer = nullptr;
     MacUILib_uninit();

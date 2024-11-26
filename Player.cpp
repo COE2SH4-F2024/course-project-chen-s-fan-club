@@ -8,8 +8,9 @@ Player::Player(GameMechs* thisGMRef)
     mainGameMechsRef = thisGMRef;
     myDir = STOP;
 
-    playerPos.setObjPos(mainGameMechsRef->getBoardSizeX()/2, mainGameMechsRef->getBoardSizeY()/2, '@');
-
+    playerPosList = new objPosArrayList();
+    objPos head(mainGameMechsRef->getBoardSizeX()/2,mainGameMechsRef->getBoardSizeY()/2, '@');
+    playerPosList->insertHead(head);
     health = 100; 
     score = 0;
     collectedItems = 0;
@@ -19,11 +20,12 @@ Player::Player(GameMechs* thisGMRef)
 Player::~Player()
 {
     // No need to delete anything since we're not using dynamic memory allocation.
+    delete playerPosList;
 }
 
-objPos Player::getPlayerPos() const
+objPosArrayList* Player::getPlayerPos() const
 {
-    return playerPos;
+    return playerPosList;
 }
 
 void Player::updatePlayerDir()
@@ -75,53 +77,66 @@ void Player::updatePlayerDir()
 }
 
 
-void Player::movePlayer()
+void Player::movePlayer(Food* Food)
 {
-    bool moved = false;
-    
+    objPos playerPos = playerPosList->getHeadElement();
+    newFood = Food;
+    int Foodx = newFood->getFoodPos().pos->x;
+    int Foody = newFood->getFoodPos().pos->y;
+    int PosX = playerPos.pos->x;
+    int PosY = playerPos.pos->y;
     int width = mainGameMechsRef->getBoardSizeX();
     int height = mainGameMechsRef->getBoardSizeY();
 
     switch(myDir){
         case Dir::UP:
-            playerPos.pos->y--;
-            if(playerPos.pos->y < 1){
-                playerPos.pos->y = height - 2;
+           PosY = playerPos.pos->y-1;
+           if(playerPos.pos->y < 1){
+                PosY = height - 2;
             }
-            moved = true;
-            break;
-        
+           break;
         case Dir::DOWN:
-            playerPos.pos->y++;
+            PosY = playerPos.pos->y+1;
             if(playerPos.pos->y >= height - 1){
-                playerPos.pos->y = 1;
+                PosY = 1;
             }
-            moved = true;
-            break;
-        
+           break;
         case Dir::LEFT:
-            playerPos.pos->x--;
+            PosX = playerPos.pos->x-1;
             if(playerPos.pos->x < 1){
-                playerPos.pos->x = width - 2;
+                PosX = width - 2;
             }
-            moved = true;
-            break;
-        
+           break;
         case Dir::RIGHT:
-            playerPos.pos->x++;
-            if(playerPos.pos->x >= width - 1){
-                playerPos.pos->x = 1;
+           PosX = playerPos.pos->x+1;
+           if(playerPos.pos->x >= width - 1){
+                PosX = 1;
             }
-            moved = true;
-            break;
-
-        case Dir::STOP:
-            break;
+           break;
+    }
+    if(myDir!=STOP) {
+        for(int i = 1; i < playerPosList->getSize(); i++)
+        {
+            objPos playerBody = playerPosList->getElement(i);
+            if(playerBody.pos->x == playerPos.pos->x && playerBody.pos->y == playerPos.pos->y)
+            {
+                mainGameMechsRef->setLoseFlag();
+            }
+        }
+        if(PosX == Foodx && PosY == Foody)
+        {
+            objPos nextObj(PosX,PosY,'@');
+            playerPosList->insertHead(nextObj);
+            newFood->generateFood(playerPos, mainGameMechsRef->getBoardSizeX(), mainGameMechsRef->getBoardSizeY());
+            mainGameMechsRef->incrementScore();
+        }
+        else
+        {
+            objPos nextObj(PosX,PosY,'@');
+            playerPosList->insertHead(nextObj);
+            playerPosList->removeTail();
+        }
     }
 }
 
-const objPosArrayList& Player::getSnakeBody() const
-{
-    return snakeBody;
-}
 
