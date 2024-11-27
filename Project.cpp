@@ -112,7 +112,7 @@ void DrawScreen(void)
 
 void LoopDelay(void)
 {
-    
+
     MacUILib_Delay(DELAY_CONST); // 0.1s delay
 }
 
@@ -120,6 +120,7 @@ void LoopDelay(void)
 void CleanUp(void)
 {
     MacUILib_clearScreen();    
+
     if(gameMechs->getLoseFlagStatus())
     {
         MacUILib_printf("\nGame Over: Player Hit Themselves \n");
@@ -128,7 +129,7 @@ void CleanUp(void)
     {
         MacUILib_printf("\nGame Over: Force quit.\n");
     }
-    
+
     delete gameMechs;
     delete myPlayer;
     delete myFood;
