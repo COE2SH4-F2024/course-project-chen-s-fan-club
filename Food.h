@@ -15,7 +15,7 @@ class Food
         Food();
         ~Food(); 
         
-        void generateFood(objPos blockOff, int boardSizeX, int boardSizeY);
+        void generateFood(objPosArrayList* blockOff, int boardSizeX, int boardSizeY);
         objPos const getFoodPos();
 };
 #endif

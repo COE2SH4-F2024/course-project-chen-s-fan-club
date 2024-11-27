@@ -12,7 +12,7 @@ using namespace std;
 
 GameMechs* gameMechs = nullptr; //Pointer to GameMechs Class
 Player *myPlayer = nullptr; //Pointer to Player Class
-Food *myFood; 
+Food *myFood = nullptr; 
 
 void Initialize(void);
 void GetInput(void);
@@ -49,7 +49,7 @@ void Initialize(void)
     gameMechs = new GameMechs(30, 15);
     myPlayer = new Player(gameMechs);
     myFood = new Food();
-    myFood->generateFood(myPlayer->getPlayerPos()->getHeadElement(),gameMechs->getBoardSizeX(), gameMechs->getBoardSizeY());  
+    myFood->generateFood(myPlayer->getPlayerPos(),gameMechs->getBoardSizeX(), gameMechs->getBoardSizeY());  
 
 }
 
@@ -66,20 +66,6 @@ void RunLogic(void)
 
     myPlayer->movePlayer(myFood);
 
-    
-    objPosArrayList* snakeBody = myPlayer->getPlayerPos();
-
-    //Collison with itself
-    objPos head = snakeBody->getHeadElement();
-    for (int i = 1; i < snakeBody->getSize(); i++)
-    {
-        objPos bodyPart = snakeBody->getElement(i);
-        if (head.isPosEqual(&bodyPart))
-        {
-            gameMechs->setLoseFlag();
-            break;
-        }
-    }
 }
 
 void DrawScreen(void)
@@ -119,7 +105,8 @@ void DrawScreen(void)
            }       
         }
         MacUILib_printf("%c", '\n');
-    }
+    }   
+    MacUILib_printf("Score: %d\n",gameMechs->getScore());
 }
 
 
@@ -133,6 +120,15 @@ void LoopDelay(void)
 void CleanUp(void)
 {
     MacUILib_clearScreen();    
+    if(gameMechs->getLoseFlagStatus())
+    {
+        MacUILib_printf("\nGame Over: Player Hit Themselves \n");
+    }
+    else if (gameMechs->getExitFlagStatus())
+    {
+        MacUILib_printf("\nGame Over: Force quit.\n");
+    }
+    
     delete gameMechs;
     delete myPlayer;
     delete myFood;

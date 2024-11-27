@@ -121,13 +121,14 @@ void Player::movePlayer(Food* Food)
             if(playerBody.pos->x == playerPos.pos->x && playerBody.pos->y == playerPos.pos->y)
             {
                 mainGameMechsRef->setLoseFlag();
+                
             }
         }
         if(PosX == Foodx && PosY == Foody)
         {
             objPos nextObj(PosX,PosY,'@');
             playerPosList->insertHead(nextObj);
-            newFood->generateFood(playerPos, mainGameMechsRef->getBoardSizeX(), mainGameMechsRef->getBoardSizeY());
+            newFood->generateFood(playerPosList, mainGameMechsRef->getBoardSizeX(), mainGameMechsRef->getBoardSizeY());
             mainGameMechsRef->incrementScore();
         }
         else
@@ -137,6 +138,40 @@ void Player::movePlayer(Food* Food)
             playerPosList->removeTail();
         }
     }
+}
+bool Player::checkFoodConsumption()
+{
+    objPos playerPos = playerPosList->getHeadElement(); 
+    static int xPos = playerPos.pos->x, yPos = playerPos.pos->y;
+    static int xFood = newFood->getFoodPos().pos->x, yFood = newFood->getFoodPos().pos->y; //Steph, interation 3.2
+
+    if(xPos == xFood && yPos == yFood)
+        {
+            return true;
+        }
+}
+void Player::increasePlayerLength()
+{
+    objPos playerPos = playerPosList->getHeadElement(); 
+    static int xPos = playerPos.pos->x, yPos = playerPos.pos->y;
+    
+    objPos nextObj(xPos,yPos,'@');
+    playerPosList->insertHead(nextObj);
+}
+
+bool Player::checkSelfCollision()
+{
+    objPos playerHead = playerPosList->getHeadElement(); 
+    for(int i = 0; i < playerPosList->getSize(); i++)
+    {
+        objPos playerBody = playerPosList->getElement(i);
+        if(playerBody.pos->x == playerHead.pos->x && playerBody.pos->y == playerHead.pos->y)
+        {
+            mainGameMechsRef->setLoseFlag();
+            return mainGameMechsRef->getLoseFlagStatus();
+        }
+    }
+
 }
 
 
