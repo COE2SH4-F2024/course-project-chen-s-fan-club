@@ -25,6 +25,8 @@ class objPosArrayList
         objPos getHeadElement() const;
         objPos getTailElement() const;
         objPos getElement(int index) const;
+        bool contains(int x, int y) const;
+        void clear();
 };
 
 #endif

@@ -49,7 +49,7 @@ void Initialize(void)
     gameMechs = new GameMechs(30, 15);
     myPlayer = new Player(gameMechs);
     myFood = new Food();
-    myFood->generateFood(myPlayer->getPlayerPos(),gameMechs->getBoardSizeX(), gameMechs->getBoardSizeY());  
+    myFood->generateFood(myPlayer->getPlayerPos(),gameMechs->getBoardSizeX(), gameMechs->getBoardSizeY(),5);  
 
 }
 
@@ -71,7 +71,6 @@ void RunLogic(void)
 void DrawScreen(void)
 {
     objPosArrayList* PlayerPos = myPlayer->getPlayerPos();
-    objPos food = myFood->getFoodPos();
 
     int Board_Width = gameMechs->getBoardSizeX();
     int Board_Length = gameMechs->getBoardSizeY();
@@ -95,14 +94,24 @@ void DrawScreen(void)
                     }
                 }
                 if(!isPlayer) {
-                    if(x == food.pos->x && y == food.pos->y) {
-                        MacUILib_printf("%c", food.symbol);
-                        gameMechs->clearInput();
-                    } else {
-                    MacUILib_printf("%c", ' ');
+                    bool isFood = false;
+                    for (int i = 0; i < myFood->getFoodBucketSize(); i++)
+                    {
+                        objPos food = myFood->getFoodAt(i);
+                        if (x == food.pos->x && y == food.pos->y)
+                        {
+                            MacUILib_printf("%c", food.symbol);
+                            isFood = true;
+                            break;
+                        }
                     }
-                }
-           }       
+
+                    if (!isFood)
+                    {
+                        MacUILib_printf(" "); // Empty space
+                    }
+                }       
+            }
         }
         MacUILib_printf("%c", '\n');
     }   
@@ -129,7 +138,7 @@ void CleanUp(void)
     {
         MacUILib_printf("\nGame Over: Force quit.\n");
     }
-
+    MacUILib_printf("Final Score:%d\n",gameMechs->getScore());
     delete gameMechs;
     delete myPlayer;
     delete myFood;

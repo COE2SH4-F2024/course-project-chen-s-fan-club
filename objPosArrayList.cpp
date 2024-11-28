@@ -109,3 +109,22 @@ objPos objPosArrayList::getElement(int index) const
 
     return aList[index];
 }
+bool objPosArrayList::contains(int x, int y) const
+{
+    for (int i = 0; i < this->getSize(); ++i)
+    {
+        objPos element = this->getElement(i);
+        if (element.pos->x == x && element.pos->y == y)
+        {
+            return true; // Position found
+        }
+    }
+    return false; // Position not found
+}
+void objPosArrayList::clear()
+{
+    while (this->getSize() > 0)
+    {
+        this->removeTail(); // Continuously remove the tail until the list is empty
+    }
+}
