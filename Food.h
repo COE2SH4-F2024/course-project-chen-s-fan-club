@@ -5,7 +5,10 @@
 #include "objPos.h"
 #include "objPosArrayList.h"
 #include "GameMechs.h"
+
 using namespace std;
+
+// Class to manage food generation and tracking in the game
 class Food
 {
     private:
@@ -13,8 +16,8 @@ class Food
         objPosArrayList* foodBucket;
     
     public:
-        Food();
-        ~Food(); 
+        Food();          // Constructor
+        ~Food();        // Destructor
         
         void generateFood(objPosArrayList* blockOff, int boardSizeX, int boardSizeY, int foodCount);
         objPos const getFoodPos();

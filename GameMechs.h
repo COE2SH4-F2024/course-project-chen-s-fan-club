@@ -3,12 +3,13 @@
 
 #include <cstdlib>
 #include <time.h>
-
 #include "objPos.h"
 #include "objPosArrayList.h"
 
 using namespace std;
 
+
+// Class to manage game mechanics and state
 class GameMechs
 {
     private:
@@ -17,16 +18,17 @@ class GameMechs
         bool loseFlag;
         int score;
 
-        int boardSizeX;
-        int boardSizeY;
+        int boardSizeX;        // Width of the game board
+        int boardSizeY;       // Height of the game board
 
-        objPos food;
+        objPos food;         // Position of the food object 
 
     public:
-        GameMechs();
+        GameMechs();        // Constructor
         GameMechs(int boardX, int boardY);
-        ~GameMechs(); // is this one needed at all? Why or why not?
+        ~GameMechs();      // Destructor
         
+        // Getter and setter functions for game state variables
         bool getExitFlagStatus() const; 
         void setExitTrue();
         bool getLoseFlagStatus() const;
@@ -43,7 +45,7 @@ class GameMechs
         int getScore() const;
         void incrementScore(int amount);
         
-        // More methods should be added here
+
 };
 
 #endif

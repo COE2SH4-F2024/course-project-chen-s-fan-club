@@ -1,18 +1,17 @@
 #include <iostream>
 #include "MacUILib.h"
 #include "objPos.h"
-
 #include "GameMechs.h"
 #include "Player.h"
 #include "Food.h"
 
 using namespace std;
-
 #define DELAY_CONST 100000
 
-GameMechs* gameMechs = nullptr; //Pointer to GameMechs Class
-Player *myPlayer = nullptr; //Pointer to Player Class
-Food *myFood = nullptr; 
+
+GameMechs* gameMechs = nullptr;     //Pointer to GameMechs Class
+Player *myPlayer = nullptr;        //Pointer to Player Class
+Food *myFood = nullptr;           //Pointer to Food Class
 
 void Initialize(void);
 void GetInput(void);
@@ -20,7 +19,6 @@ void RunLogic(void);
 void DrawScreen(void);
 void LoopDelay(void);
 void CleanUp(void);
-
 
 
 int main(void)
@@ -46,17 +44,21 @@ void Initialize(void)
     MacUILib_init();
     MacUILib_clearScreen();
 
-    gameMechs = new GameMechs(30, 15);
-    myPlayer = new Player(gameMechs);
+    gameMechs = new GameMechs(30, 15);     // Create game mechanics with a board size of 30x15
+    myPlayer = new Player(gameMechs);     // Create player and place at initial position
+
+   // Create food and generate initial food items on the board 
     myFood = new Food();
     myFood->generateFood(myPlayer->getPlayerPos(),gameMechs->getBoardSizeX(), gameMechs->getBoardSizeY(),5);  
 
 }
 
+
 void GetInput(void)
 {
    gameMechs->ScanInput();
 }
+
 
 void RunLogic(void)
 {
@@ -68,15 +70,20 @@ void RunLogic(void)
 
 }
 
+
 void DrawScreen(void)
 {
     objPosArrayList* PlayerPos = myPlayer->getPlayerPos();
 
     int Board_Width = gameMechs->getBoardSizeX();
     int Board_Length = gameMechs->getBoardSizeY();
-    MacUILib_clearScreen();    
+    MacUILib_clearScreen();  
+
+    // Loop through each row and column of the board  
     for (int y=0;y<Board_Length;y++){
         for(int x=0;x<Board_Width;x++){
+
+           // Draw border around the board
            if(x==0 || x==Board_Width-1 || y==0 || y==Board_Length-1)
            {
                 MacUILib_printf("%c", '#');  
@@ -84,6 +91,8 @@ void DrawScreen(void)
            else 
            {
                 bool isPlayer = false;
+
+                // Check if the current position is part of the player
                 for (int i=0; i<PlayerPos->getSize();i++)
                 {
                     if (x == PlayerPos->getElement(i).pos->x && y == PlayerPos->getElement(i).pos->y)
@@ -93,6 +102,8 @@ void DrawScreen(void)
                         break;
                     }
                 }
+
+                // If not a player segment, check for food
                 if(!isPlayer) {
                     bool isFood = false;
                     for (int i = 0; i < myFood->getFoodBucketSize(); i++)
@@ -106,6 +117,7 @@ void DrawScreen(void)
                         }
                     }
 
+                    // If no player or food, print empty space
                     if (!isFood)
                     {
                         MacUILib_printf(" "); // Empty space
@@ -114,7 +126,8 @@ void DrawScreen(void)
             }
         }
         MacUILib_printf("%c", '\n');
-    }   
+    }  
+
     MacUILib_printf("Score: %d\n",gameMechs->getScore());
 }
 
@@ -138,12 +151,18 @@ void CleanUp(void)
     {
         MacUILib_printf("\nGame Over: Force quit.\n");
     }
+    
     MacUILib_printf("Final Score:%d\n",gameMechs->getScore());
+
+    // Free dynamically allocated memory
     delete gameMechs;
     delete myPlayer;
     delete myFood;
+
+    // Reset pointers to avoid dangling references
     myFood = nullptr;
     gameMechs = nullptr;
     myPlayer = nullptr;
+    
     MacUILib_uninit();
 }
